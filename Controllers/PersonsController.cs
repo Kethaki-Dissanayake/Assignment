@@ -1,4 +1,4 @@
-﻿using AspNetCore;
+﻿
 using Assignment.Data;
 using Assignment.Data.Services;
 using Assignment.Models;
@@ -25,6 +25,8 @@ namespace Assignment.Controllers
             return View(data);
         }
 
+        
+
         //Get : Persons/Create
         public IActionResult Create()
         {
@@ -32,7 +34,7 @@ namespace Assignment.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("ProfilePicture,FirstName,LastName,SSN,DOB")]Person person)
+        public async Task<IActionResult> Create(Person person)
         {
             if(!ModelState.IsValid)
             {
@@ -94,5 +96,18 @@ namespace Assignment.Controllers
             
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Search(string searchString)
+        {
+            var data = await _service.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                data = data.Where(p => p.FirstName.StartsWith(searchString));
+            }
+
+            return View("Index", data);
+        }
+
     }
 }
